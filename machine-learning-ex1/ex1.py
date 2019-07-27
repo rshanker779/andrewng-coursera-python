@@ -45,8 +45,26 @@ def plot_data(X, y):
     plt.scatter(X, y)
 
 
-def feature_normalization(X):
-    pass
+def feature_normalization(X:np.ndarray):
+    """
+    Computes the StandardScaling of X (as Sklearn)
+    :param X: Any 2dim array
+    :return: Scaled X, mean of X, and std of X
+    """
+    mu = np.mean(X,axis=0)
+    #Changing delta dof to match octave/matlab
+    sigma=np.std(X, axis=0, ddof=1)
+    return (X-mu)/sigma, mu, sigma
+
+def normal_equation(X:np.ndarray, y:np.ndarray):
+    """
+    Suppose we have n features and m training examples
+    :param X: Matrix of size (n,m)
+    :param y: Vector of size (m,1
+    :return: Theta, parameters for linear regression found from normal eqn
+    """
+    return np.matmul( np.matmul(np.linalg.inv(np.matmul(X.T, X)), X.T), y)
+
 
 def ex1_main():
     data = np.genfromtxt(
@@ -81,9 +99,44 @@ def ex1_main():
     predict2 = np.matmul(np.asarray([1, 7]).reshape((1, 2)), theta)
     print("For population = 70,000, we predict a profit of %f" % (predict2 * 10000))
     print("Expected:45342.45")
+    plt.show()
 
+def ex1_multi_main():
+    data = np.genfromtxt(os.path.join(base_data_directory, 'ex1data2.txt'), delimiter=',')
+    X = data[:,:2]
+    y=data[:,2]
+    m = len(y)
+    X, mu, sigma =feature_normalization(X)
+    y = y.reshape((m,1))
+    X = np.concatenate((np.ones((m, 1)), X), axis=1)
+    print("Mu calcualted as %s" %mu)
+    print("Expected:    2000.6809      3.1702")
+    print("Sigma calcualted as %s" %sigma)
+    print("Expected:       794.70235     0.76098")
+    alpha =0.001
+    num_iters=40000
+    theta = np.zeros((3,1))
+    theta, J_history = gradient_descent(X, y, theta, alpha, num_iters)
+    print('Theta computed from gradient descent: %s'%theta)
+    X_ex = np.asarray([1650,3]).reshape((1,2))
+    X_ex = (X_ex-mu)/sigma
+    X_ex_reshape = np.ones((1,3))
+    X_ex_reshape[:,1:] = X_ex
+    X_ex = X_ex_reshape
+    price = np.matmul(X_ex, theta)
 
+    print('Predicted price of a 1650 sq-ft, 3 br house (using gradient descent):\n $%f'% price)
+    #Now do normal equation
+    data = np.genfromtxt(os.path.join(base_data_directory, 'ex1data2.txt'), delimiter=',')
+    X = data[:,:2]
+    X = np.concatenate((np.ones((m, 1)), X), axis=1)
+    theta = normal_equation(X, y)
+    print('Theta computed from normal equation: %s'%theta)
+    X_ex = np.asarray([1,1650,3])
+    price = np.matmul(X_ex, theta)
+    print('Predicted price of a 1650 sq-ft, 3 br house (using normal eqn):\n $%f'% price)
 
 
 if __name__ == "__main__":
     ex1_main()
+    ex1_multi_main()
