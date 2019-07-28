@@ -1,8 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-
-base_data_directory = os.path.join(os.path.dirname(__file__), "data")
+from utilities import base_data_directory
 
 
 def compute_cost(X: np.ndarray, y: np.ndarray, theta: np.ndarray):
