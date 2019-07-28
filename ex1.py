@@ -105,11 +105,11 @@ def ex1_multi_main():
     data = utils.open_text_file("ex1data2.txt")
     X = data[:, :2]
     y = data[:, 2]
-    m,_=X.shape
+    m, _ = X.shape
     X, mu, sigma = feature_normalization(X)
     y = y.reshape((m, 1))
     X = np.concatenate((np.ones((m, 1)), X), axis=1)
-    _,n=X.shape
+    _, n = X.shape
     print("Mu calcualted as %s" % mu)
     print("Expected:    2000.6809      3.1702")
     print("Sigma calcualted as %s" % sigma)
