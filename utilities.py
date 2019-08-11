@@ -16,3 +16,7 @@ def open_text_file(name: str) -> np.ndarray:
     :return: array of data
     """
     return np.genfromtxt(os.path.join(base_data_directory, name), delimiter=",")
+
+
+def sigmoid(z: np.ndarray) -> np.ndarray:
+    return 1 / (1 + np.exp(-z))

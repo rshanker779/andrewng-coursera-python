@@ -1,11 +1,8 @@
 import numpy as np
 import utilities as utils
-from typing import Tuple
 import scipy.optimize as op
 
-
-def sigmoid(z: np.ndarray) -> np.ndarray:
-    return 1 / (1 + np.exp(-z))
+from utilities import sigmoid
 
 
 def cost_function(theta: np.ndarray, X: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -48,7 +45,7 @@ def predict(theta: np.ndarray, X: np.ndarray) -> np.ndarray:
 def map_features(X1: np.ndarray, X2: np.ndarray, degree=6) -> np.ndarray:
     m = len(X1)
     out = np.ones((m, 1))
-    for i in range(1,degree + 1):
+    for i in range(1, degree + 1):
         for j in range(i + 1):
             new_feature = np.power(X1, i - j) * np.power(X2, j)
             new_feature = new_feature.reshape((m, 1))
@@ -87,7 +84,7 @@ def grad_function_reg(
     """
     m, n = X.shape
     grad = grad_function(theta, X, y)
-    grad += (lambda_ / m) * theta.reshape(n,)
+    grad += (lambda_ / m) * theta.reshape(n)
     grad[0] -= (lambda_ / m) * theta[0]
     return grad.reshape((n,))
 
@@ -168,7 +165,7 @@ def ex2_reg_main():
     print("Expected gradients (approx) - first five values only:")
     print(" 0.0085\n 0.0188\n 0.0001\n 0.0503\n 0.0115")
 
-    test_theta =  np.ones((n, 1))
+    test_theta = np.ones((n, 1))
     cost = cost_function_reg(test_theta, X, y, 10)
     grad = grad_function_reg(test_theta, X, y, 10)
     print("Cost at test theta  with lambda=10: %f" % cost)
@@ -178,7 +175,7 @@ def ex2_reg_main():
     print("Expected gradients (approx) - first five values only:")
     print(" 0.3460\n 0.1614\n 0.1948\n 0.2269\n 0.0922")
 
-    lambda_=1
+    lambda_ = 1
     res = op.minimize(
         fun=cost_function_reg,
         x0=initial_theta,
@@ -188,8 +185,8 @@ def ex2_reg_main():
     )
     theta = res.x
     p = predict(theta, X)
-    print('Train Accuracy: %f' %( np.mean(p==y) * 100))
-    print('Expected accuracy (with lambda = 1): 83.1 (approx)\n')
+    print("Train Accuracy: %f" % (np.mean(p == y) * 100))
+    print("Expected accuracy (with lambda = 1): 83.1 (approx)\n")
 
 
 if __name__ == "__main__":
